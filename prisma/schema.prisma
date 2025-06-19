@@ -8,14 +8,17 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  phone     String   @unique
-  username  String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  phone     String    @unique
+  username  String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   roleId    Int
-  role      Role     @relation(fields: [roleId], references: [id])
+  role      Role      @relation(fields: [roleId], references: [id])
+  catalogs  Catalog[]
+  products  Product[]
+  stores    Store[]
 
   @@index([roleId])
 }
@@ -28,4 +31,91 @@ model Role {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   users       User[]
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  catalogId     Int
+  name          String?
+  description   String?
+  priceCents    Int      @default(0)
+  priceCurrency String   @default("USD")
+  slug          String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id])
+  catalog       Catalog        @relation(fields: [catalogId], references: [id])
+  storeProducts StoreProduct[]
+
+  @@index([userId])
+}
+
+model Catalog {
+  id         Int       @id @default(autoincrement())
+  name       String?
+  status     String    @default("draft")
+  userId     Int
+  categoryId Int
+  user       User      @relation(fields: [userId], references: [id])
+  category   Category  @relation(fields: [categoryId], references: [id])
+  products   Product[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String
+  altText   String?
+  type      String
+  typeId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type, typeId])
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  catalogs  Catalog[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Store {
+  id        Int            @id @default(autoincrement())
+  name      String?
+  slug      String?
+  userId    Int
+  user      User           @relation(fields: [userId], references: [id])
+  products  StoreProduct[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model StoreProduct {
+  id        Int      @id @default(autoincrement())
+  storeId   Int
+  productId Int
+  store     Store    @relation(fields: [storeId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([storeId, productId])
+}
+
+model Variant {
+  id           Int      @id @default(autoincrement())
+  sourceType   String
+  sourceId     Int
+  optionName   String
+  optionValues String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([sourceType, sourceId, optionName])
 }

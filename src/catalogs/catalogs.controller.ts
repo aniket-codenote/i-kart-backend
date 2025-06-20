@@ -14,7 +14,9 @@ export class CatalogsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Catalog | null> {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Catalog | null> {
     return this.catalogsService.findOne(id);
   }
 }

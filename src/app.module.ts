@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { PrismaModule } from './prisma/prisma.module';
 import { CatalogsModule } from './catalogs/catalogs.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CatalogsModule } from './catalogs/catalogs.module';
     }),
     PrismaModule,
     CatalogsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

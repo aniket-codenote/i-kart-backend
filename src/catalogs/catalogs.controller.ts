@@ -1,7 +1,9 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { CatalogsService } from './catalogs.service';
 import { Catalog } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('catalogs')
 @Controller('catalogs')
 export class CatalogsController {
   constructor(private readonly catalogsService: CatalogsService) {}

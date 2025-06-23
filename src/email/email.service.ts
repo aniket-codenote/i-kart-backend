@@ -1,0 +1,60 @@
+import { Injectable, Logger } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
+
+@Injectable()
+export class EmailService {
+  private transporter: nodemailer.Transporter;
+  private ready = false;
+
+  constructor() {
+    this.init();
+  }
+
+  private async init() {
+    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      this.transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+    } else {
+      const testAccount = await nodemailer.createTestAccount();
+
+      this.transporter = nodemailer.createTransport({
+        host: testAccount.smtp.host,
+        port: testAccount.smtp.port,
+        secure: testAccount.smtp.secure,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass,
+        },
+      });
+
+    }
+
+    this.ready = true;
+  }
+
+  async sendOtpEmail(to: string, otp: string) {
+    if (!this.ready) {
+      await new Promise((r) => setTimeout(r, 500));
+    }
+
+    const info = await this.transporter.sendMail({
+      from: '"Your App" <no-reply@example.com>',
+      to,
+      subject: 'Your OTP Code',
+      text: `Your OTP is: ${otp}`,
+      html: `<p>Your OTP is: <strong>${otp}</strong></p>`,
+    });
+
+    const previewUrl = nodemailer.getTestMessageUrl(info);
+    if (previewUrl) {
+      Logger.log(`📬 Preview email: ${previewUrl}`);
+    }
+  }
+}

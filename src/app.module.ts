@@ -13,6 +13,7 @@ import { AppService } from './app.service';
 
 import { AppController } from './app.controller';
 import { AuthController } from './auth/auth.controller';
+import { StoreModule } from './store/store.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AuthController } from './auth/auth.controller';
     CatalogsModule,
     ProductsModule,
     EmailModule,
+    StoreModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],

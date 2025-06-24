@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './data_transfer_object/otp.dto';
+import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './dto/otp.dto';
 
 @Controller('auth')
 export class AuthController {

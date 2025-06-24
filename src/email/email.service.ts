@@ -33,13 +33,12 @@ export class EmailService {
           pass: testAccount.pass,
         },
       });
-
     }
 
     this.ready = true;
   }
 
-  async sendOtpEmail(to: string, otp: string) {
+  async sendOtpEmail(to: string, otp: string): Promise<{ previewUrl?: string | false }> {
     if (!this.ready) {
       await new Promise((r) => setTimeout(r, 500));
     }
@@ -56,5 +55,7 @@ export class EmailService {
     if (previewUrl) {
       Logger.log(`📬 Preview email: ${previewUrl}`);
     }
+
+    return { previewUrl };
   }
 }

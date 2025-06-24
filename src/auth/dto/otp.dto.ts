@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsEmail } from 'class-validator';
+import { IsNumber, IsString, IsEmail, IsOptional } from 'class-validator';
 
 export class GenerateOtpDto {
   @IsEmail()
@@ -6,8 +6,8 @@ export class GenerateOtpDto {
 }
 
 export class VerifyOtpDto {
-  @IsNumber()
-  userId: number;
+  @IsEmail()
+  email: string;
 
   @IsString()
   code: string;
@@ -24,5 +24,6 @@ export class SignupDto {
   username: string;
 
   @IsNumber()
-  roleId: number;
+  @IsOptional()
+  roleId?: number;
 }

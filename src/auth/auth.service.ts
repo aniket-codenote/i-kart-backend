@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, ConflictException }
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
-import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './data_transfer_object/otp.dto';
+import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './dto/otp.dto';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -13,13 +13,13 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
 
-  async generateOtp(data: GenerateOtpDto): Promise<{ message: string }> {
+  async generateOtp(data: GenerateOtpDto): Promise<{ statusCode: number; previewUrl?: string }> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('No user found with this email');
     }
 
     await this.prisma.otp.deleteMany({
@@ -39,21 +39,22 @@ export class AuthService {
       },
     });
 
-    await this.emailService.sendOtpEmail(user.email, code);
-
-    return { message: 'OTP sent successfully' };
+    const { previewUrl } = await this.emailService.sendOtpEmail(user.email, code);
+    const finalPreviewUrl = previewUrl === false ? undefined : previewUrl;
+    return { statusCode: 200, previewUrl: finalPreviewUrl };
   }
 
   async verifyOtp(data: VerifyOtpDto): Promise<{ token: string }> {
     const otpRecord = await this.prisma.otp.findFirst({
       where: {
-        userId: data.userId,
+        user: { email: data.email },
         code: data.code,
-      } as Prisma.OtpWhereInput,
+      },
+      include: { user: true },
     });
 
     if (!otpRecord) {
-      throw new BadRequestException('Invalid OTP');
+      throw new BadRequestException('Invalid OTP or email');
     }
 
     if (otpRecord.expiresAt < new Date()) {
@@ -64,14 +65,7 @@ export class AuthService {
       where: { id: otpRecord.id },
     });
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: data.userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+    const user = otpRecord.user;
     const token = this.jwtService.sign({
       userId: user.id,
       email: user.email,
@@ -82,8 +76,6 @@ export class AuthService {
   }
 
   async signup(data: SignupDto): Promise<{ status: string }> {
-    console.log('Signup input:', data);
-
     const existingUser = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -114,7 +106,6 @@ export class AuthService {
 
       return { status: 'ok' };
     } catch (error) {
-      console.error('Prisma create error:', error);
       throw new BadRequestException('Failed to create user: ' + error.message);
     }
   }

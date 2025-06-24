@@ -16,7 +16,7 @@ export class AuthController {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
-  @Post('signup/complete')
+  @Post('signup')
   async signup(@Body() signupDto: SignupDto) {
     return this.authService.signup(signupDto);
   }

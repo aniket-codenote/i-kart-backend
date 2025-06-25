@@ -44,11 +44,11 @@ export class EmailService {
     }
 
     const info = await this.transporter.sendMail({
-      from: '"Your App" <no-reply@example.com>',
+      from: '"i-kart" <no-reply@example.com>',
       to,
-      subject: 'Your OTP Code',
-      text: `Your OTP is: ${otp}`,
-      html: `<p>Your OTP is: <strong>${otp}</strong></p>`,
+      subject: 'Your OTP code to login to i-kart',
+      text: `Your login OTP is: ${otp}`,
+      html: `<p>Your login OTP is: <strong>${otp}</strong></p>`,
     });
 
     const previewUrl = nodemailer.getTestMessageUrl(info);

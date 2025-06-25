@@ -14,6 +14,7 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { AuthController } from './auth/auth.controller';
 import { StoreModule } from './store/store.module';
+import { StoreProductModule } from './store-product/store-product.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { StoreModule } from './store/store.module';
     ProductsModule,
     EmailModule,
     StoreModule,
+    StoreProductModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],

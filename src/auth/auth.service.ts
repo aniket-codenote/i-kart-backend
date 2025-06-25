@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './dto/otp.dto';
-import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -53,23 +52,23 @@ export class AuthService {
       include: { user: true },
     });
 
-    if (!otpRecord) {
-      throw new BadRequestException('Invalid OTP or email');
+    if (!otpRecord || otpRecord.expiresAt < new Date()) {
+      throw new BadRequestException('Invalid or expired OTP');
     }
 
-    if (otpRecord.expiresAt < new Date()) {
-      throw new BadRequestException('OTP has expired');
-    }
-
-    await this.prisma.otp.delete({
-      where: { id: otpRecord.id },
-    });
+    await this.prisma.otp.delete({ where: { id: otpRecord.id } });
 
     const user = otpRecord.user;
+
     const token = this.jwtService.sign({
       userId: user.id,
       email: user.email,
       roleId: user.roleId,
+    });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { token },
     });
 
     return { token };
@@ -108,5 +107,22 @@ export class AuthService {
     } catch (error) {
       throw new BadRequestException('Failed to create user: ' + error.message);
     }
+  }
+
+  async signout(email: string): Promise<{ status: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { token: null },
+    });
+
+    return { status: 'signed out' };
   }
 }

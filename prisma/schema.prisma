@@ -20,7 +20,8 @@ model User {
   products  Product[]
   stores    Store[]
   otps      Otp[]
-
+  token     String?   @unique
+  
   @@index([roleId])
 }
 

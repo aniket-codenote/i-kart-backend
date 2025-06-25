@@ -20,4 +20,9 @@ export class AuthController {
   async signup(@Body() signupDto: SignupDto) {
     return this.authService.signup(signupDto);
   }
+
+  @Post('signout')
+  async signout(@Body('email') email: string) {
+    return this.authService.signout(email);
+  }
 }

@@ -7,10 +7,23 @@ export class CatalogsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<Catalog[]> {
-    return this.prisma.catalog.findMany();
+    return this.prisma.catalog.findMany(
+      {
+        include: {
+          catalogImages: true,
+        },
+      }
+    );
   }
 
   async findOne(id: number): Promise<Catalog | null> {
-    return this.prisma.catalog.findUnique({ where: { id } });
+    return this.prisma.catalog.findUnique(
+      {
+        where: { id },
+        include: {
+          catalogImages: true,
+        },
+      }
+    );
   }
 }

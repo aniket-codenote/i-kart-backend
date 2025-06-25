@@ -8,6 +8,7 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateProductVariantDto } from './create-product-variant.dto';
+import { CreateProductImageDto } from './create-product-image.dto';
 
 export class CreateProductDto {
   @ApiProperty()
@@ -40,4 +41,10 @@ export class CreateProductDto {
   @ValidateNested({ each: true })
   @Type(() => CreateProductVariantDto)
   productVariants: CreateProductVariantDto[];
+
+  @ApiProperty({ type: [CreateProductImageDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateProductImageDto)
+  productImages: CreateProductImageDto[];
 }

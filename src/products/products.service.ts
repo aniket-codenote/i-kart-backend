@@ -9,7 +9,7 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: number, dto: CreateProductDto): Promise<Product> {
-    const { catalogId, productVariants, ...data } = dto;
+    const { catalogId, productVariants, productImages, ...data } = dto;
 
     return this.prisma.product.create({
       data: {
@@ -19,40 +19,68 @@ export class ProductsService {
         productVariants: {
           create: productVariants,
         },
+        productImages: {
+          create: productImages,
+        },
       },
       include: {
         productVariants: true,
+        productImages: true,
       },
     });
   }
 
   findAll() {
-    return this.prisma.product.findMany();
+    return this.prisma.product.findMany(
+      {
+        include: {
+          productVariants: true,
+          productImages: true,
+        },
+      }
+    );
   }
 
   findOne(id: number) {
-    return this.prisma.product.findUnique({
-      where: { id },
-    });
+    return this.prisma.product.findUnique(
+      {
+        where: { id },
+        include: {
+          productVariants: true,
+          productImages: true,
+        },
+      }
+    );
   }
 
   async update(productId: number, dto: UpdateProductDto): Promise<Product> {
-    const { catalogId, productVariants, ...data } = dto;
+    const { catalogId, productVariants, productImages, ...data } = dto;
 
     return this.prisma.product.update({
       where: { id: productId },
       data: {
         ...data,
-        ...(catalogId && { catalog: { connect: { id: catalogId } } }),
+        ...(catalogId && {
+          catalog: {
+            connect: { id: catalogId },
+          },
+        }),
         ...(productVariants && {
           productVariants: {
             deleteMany: {},
             create: productVariants,
           },
         }),
+        ...(productImages && {
+          productImages: {
+            deleteMany: {},
+            create: productImages,
+          },
+        }),
       },
       include: {
         productVariants: true,
+        productImages: true,
       },
     });
   }

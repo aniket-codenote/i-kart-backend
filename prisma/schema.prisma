@@ -51,33 +51,43 @@ model Product {
   catalog         Catalog          @relation(fields: [catalogId], references: [id])
   productVariants ProductVariant[]
   storeProducts   StoreProduct[]
+  productImages   ProductImage[]
 
   @@index([userId])
 }
 
 model Catalog {
-  id         Int       @id @default(autoincrement())
-  name       String?
-  status     String    @default("draft")
-  userId     Int
-  categoryId Int
-  user       User      @relation(fields: [userId], references: [id])
-  category   Category  @relation(fields: [categoryId], references: [id])
-  products   Product[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id             Int            @id @default(autoincrement())
+  name           String?
+  status         String         @default("draft")
+  userId         Int
+  categoryId     Int
+  user           User           @relation(fields: [userId], references: [id])
+  category       Category       @relation(fields: [categoryId], references: [id])
+  products       Product[]
+  catalogImages  CatalogImage[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
-model Image {
+model ProductImage {
   id        Int      @id @default(autoincrement())
   url       String
   altText   String?
-  type      String
-  typeId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  @@index([type, typeId])
+model CatalogImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  altText   String?
+  catalog   Catalog  @relation(fields: [catalogId], references: [id], onDelete: Cascade)
+  catalogId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Category {
@@ -125,10 +135,10 @@ model ProductVariant {
 }
 
 model Otp {
-  id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
-  code       String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }

@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './dto/otp.dto';
+import { GenerateOtpDto, VerifyOtpDto, SignupDto, SignOutDto } from './dto/user_auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,7 +22,7 @@ export class AuthController {
   }
 
   @Post('signout')
-  async signout(@Body('email') email: string) {
-    return this.authService.signout(email);
+  async signout(@Body() SignOutDto: SignOutDto) {
+    return this.authService.signout(SignOutDto);
   }
 }

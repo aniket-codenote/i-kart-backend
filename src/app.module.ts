@@ -15,6 +15,7 @@ import { StoreProductModule } from './store-product/store-product.module';
 import { AuthModule } from './auth/auth.module';
 import { ImageService } from './image/image.service';
 import { ImageModule } from './image/image.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ImageModule } from './image/image.module';
     StoreProductModule,
     AuthModule,
     ImageModule,
+    UploadModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService, ImageService],

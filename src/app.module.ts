@@ -15,6 +15,7 @@ import { AppController } from './app.controller';
 import { AuthController } from './auth/auth.controller';
 import { StoreModule } from './store/store.module';
 import { StoreProductModule } from './store-product/store-product.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,16 +25,13 @@ import { StoreProductModule } from './store-product/store-product.module';
         DATABASE_URL: Joi.string().uri().required(),
       }),
     }),
-    JwtModule.register({
-      secret: 'your_secret_key',
-      signOptions: { expiresIn: '1h' },
-    }),
     PrismaModule,
     CatalogsModule,
     ProductsModule,
     EmailModule,
     StoreModule,
     StoreProductModule,
+    AuthModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],

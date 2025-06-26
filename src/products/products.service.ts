@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -30,9 +30,10 @@ export class ProductsService {
     });
   }
 
-  findAll() {
+  findAll(userId: number) {
     return this.prisma.product.findMany(
       {
+        where: { userId },
         include: {
           productVariants: true,
           productImages: true,
@@ -41,10 +42,10 @@ export class ProductsService {
     );
   }
 
-  findOne(id: number) {
+  findOne(userId: number, id: number) {
     return this.prisma.product.findUnique(
       {
-        where: { id },
+        where: { id, userId },
         include: {
           productVariants: true,
           productImages: true,
@@ -53,7 +54,12 @@ export class ProductsService {
     );
   }
 
-  async update(productId: number, dto: UpdateProductDto): Promise<Product> {
+  async update(userId: number, productId: number, dto: UpdateProductDto): Promise<Product> {
+    const existing = await this.prisma.product.findFirst({
+      where: { id: productId, userId },
+    });
+    if (!existing) throw new NotFoundException('Product not found');
+
     const { catalogId, productVariants, productImages, ...data } = dto;
 
     return this.prisma.product.update({
@@ -85,9 +91,9 @@ export class ProductsService {
     });
   }
 
-  remove(id: number) {
+  remove(userId: number, id: number) {
     return this.prisma.product.delete({
-      where: { id },
+      where: { id, userId },
     });
   }
 }

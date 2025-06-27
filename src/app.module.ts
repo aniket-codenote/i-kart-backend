@@ -15,7 +15,7 @@ import { AppController } from './app.controller';
 import { AuthController } from './auth/auth.controller';
 import { StoreModule } from './store/store.module';
 import { StoreProductModule } from './store-product/store-product.module';
-import { AuthModule } from './auth/auth.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { AuthModule } from './auth/auth.module';
     EmailModule,
     StoreModule,
     StoreProductModule,
-    AuthModule,
+    UploadModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],

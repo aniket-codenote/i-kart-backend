@@ -9,6 +9,7 @@ export class CatalogsService {
   async findAll(): Promise<Catalog[]> {
     return this.prisma.catalog.findMany(
       {
+        where: { status: 'published' },
         include: {
           catalogImages: true,
         },
@@ -19,7 +20,7 @@ export class CatalogsService {
   async findOne(id: number): Promise<Catalog | null> {
     return this.prisma.catalog.findUnique(
       {
-        where: { id },
+        where: { id, status: 'published' },
         include: {
           catalogImages: true,
         },

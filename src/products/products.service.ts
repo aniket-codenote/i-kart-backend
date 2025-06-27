@@ -3,13 +3,27 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Product } from '@prisma/client';
+import { ImageService } from '../image/image.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly imageService: ImageService,
+  ) {}
 
   async create(userId: number, dto: CreateProductDto): Promise<Product> {
     const { catalogId, productVariants, productImages, ...data } = dto;
+   
+    const processedImages = await Promise.all(
+      productImages.map(async (image) => {
+        const url = await this.imageService.uploadBase64Image(image.url);
+        return {
+          url: url,
+          altText: image.altText,
+        };
+      }),
+    );
 
     return this.prisma.product.create({
       data: {
@@ -20,7 +34,7 @@ export class ProductsService {
           create: productVariants,
         },
         productImages: {
-          create: productImages,
+          create: processedImages,
         },
       },
       include: {

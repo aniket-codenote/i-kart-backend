@@ -64,8 +64,11 @@ model Catalog {
   categoryId     Int
   user           User           @relation(fields: [userId], references: [id])
   category       Category       @relation(fields: [categoryId], references: [id])
-  products       Product[]
-  catalogImages  CatalogImage[]
+
+  products        Product[]
+  catalogImages   CatalogImage[]
+  catalogVariants CatalogVariant[]
+
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 }
@@ -141,4 +144,17 @@ model Otp {
   code      String
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model CatalogVariant {
+  id           Int      @id @default(autoincrement())
+  catalogId    Int
+  optionName   String
+  optionValues String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  catalog Catalog @relation(fields: [catalogId], references: [id])
+
+  @@unique([catalogId, optionName])
 }

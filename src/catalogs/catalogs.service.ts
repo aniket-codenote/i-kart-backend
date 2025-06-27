@@ -11,6 +11,7 @@ export class CatalogsService {
       {
         where: { status: 'published' },
         include: {
+          catalogVariants: true,
           catalogImages: true,
         },
       }
@@ -22,6 +23,7 @@ export class CatalogsService {
       {
         where: { id, status: 'published' },
         include: {
+          catalogVariants: true,
           catalogImages: true,
         },
       }

@@ -1,7 +1,6 @@
 import * as Joi from 'joi';
 
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { CatalogsModule } from './catalogs/catalogs.module';
@@ -16,6 +15,7 @@ import { AuthController } from './auth/auth.controller';
 import { StoreModule } from './store/store.module';
 import { StoreProductModule } from './store-product/store-product.module';
 import { UploadModule } from './upload/upload.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -32,6 +32,7 @@ import { UploadModule } from './upload/upload.module';
     StoreModule,
     StoreProductModule,
     UploadModule,
+    AuthModule
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],

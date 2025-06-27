@@ -20,7 +20,4 @@ export class CreateStoreDto {
   @IsString()
   banner?: string;
 
-  @ApiProperty()
-  @IsInt()
-  userId: number; 
 }

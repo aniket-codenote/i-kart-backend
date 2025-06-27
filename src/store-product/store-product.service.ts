@@ -7,6 +7,18 @@ import { UpdateStoreProductDto } from './dto/update-store-product.dto';
 export class StoreProductService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findOne(id: number) {
+    const storeProduct = await this.prisma.storeProduct.findUnique({
+      where: { id },
+    });
+
+    if (!storeProduct) {
+      throw new NotFoundException('StoreProduct not found');
+    }
+
+    return storeProduct;
+  }
+
   async create(data: CreateStoreProductDto) {
     return this.prisma.storeProduct.create({ data });
   }
@@ -28,5 +40,13 @@ export class StoreProductService {
         product: true,
       },
     });
+  }
+
+  async remove(id: number) {
+    await this.findOne(id);
+    await this.prisma.storeProduct.delete({
+      where: { id },
+    });
+    return { success: true };
   }
 }

@@ -7,13 +7,15 @@ import { UpdateStoreDto } from './dto/update-store.dto';
 export class StoreService {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.store.findMany();
+  findAll(userId: number) {
+    return this.prisma.store.findMany({
+      where: { userId },
+    });
   }
 
-  async findOne(id: number) {
-    const store = await this.prisma.store.findUnique({
-      where: { id },
+  async findOne(userId: number, id: number) {
+    const store = await this.prisma.store.findFirst({
+      where: { id, userId },
     });
 
     if (!store) {
@@ -23,31 +25,26 @@ export class StoreService {
     return store;
   }
 
- create(data: CreateStoreDto) {
-  return this.prisma.store.create({
-    data: {
-      name: data.name,
-      slug: data.slug,
-      user: {
-        connect: {
-          id: data.userId
-        }
-      }
-    }
-  });
-}
+  create(userId: number, data: CreateStoreDto) {
+    return this.prisma.store.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+        userId: userId,
+      },
+    });
+  }
 
-
-  async update(id: number, data: UpdateStoreDto) {
-    await this.findOne(id); // ensure store exists
+  async update(userId: number, id: number, data: UpdateStoreDto) {
+    await this.findOne(userId, id);
     return this.prisma.store.update({
       where: { id },
       data,
     });
   }
 
-  async remove(id: number) {
-    await this.findOne(id); // ensure store exists
+  async remove(userId: number, id: number) {
+    await this.findOne(userId, id);
     await this.prisma.store.delete({ where: { id } });
     return { success: true };
   }

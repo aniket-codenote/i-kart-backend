@@ -24,8 +24,9 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Req() req: any, @Body() dto: CreateProductDto) {
-    return this.productsService.create(req?.user?.id, dto);
+  create(@Req() req: any, @Body() dto: any) {
+    const { userId, ...data } = dto;
+    return this.productsService.create(userId, data);
   }
 
   @Get()

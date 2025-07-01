@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, ConflictException }
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
-import { GenerateOtpDto, VerifyOtpDto, SignupDto, SignOutDto } from './dto/user_auth.dto';
+import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './dto/user_auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -109,9 +109,9 @@ export class AuthService {
     }
   }
 
-  async signout(data: SignOutDto): Promise<{ status: string }> {
+  async signout(email: string): Promise<{ status: string }> {
     const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
+      where: { email },
     });
 
     if (!user) {

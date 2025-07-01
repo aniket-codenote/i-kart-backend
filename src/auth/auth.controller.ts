@@ -1,7 +1,12 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { GenerateOtpDto, VerifyOtpDto, SignupDto, SignOutDto } from './dto/user_auth.dto';
+import { GenerateOtpDto, VerifyOtpDto, SignupDto } from './dto/user_auth.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -21,8 +26,10 @@ export class AuthController {
     return this.authService.signup(signupDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Post('signout')
-  async signout(@Body() SignOutDto: SignOutDto) {
-    return this.authService.signout(SignOutDto);
+  async signout(@Req() req: any) {
+    return this.authService.signout(req?.user?.email);
   }
 }

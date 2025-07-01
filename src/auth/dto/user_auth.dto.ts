@@ -35,9 +35,3 @@ export class SignupDto {
   @IsOptional()
   roleId?: number;
 }
-
-export class SignOutDto {
-  @ApiProperty()
-  @IsEmail()
-  email: string;
-}

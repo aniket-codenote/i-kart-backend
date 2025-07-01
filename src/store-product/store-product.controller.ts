@@ -20,11 +20,12 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @ApiTags('store-products')
 @Controller('store-products')
 @Controller('store-products')
+
 export class StoreProductController {
   constructor(private readonly storeProductService: StoreProductService) {}
 
   @Post()
-  create(@Req() req: any, @Body() dto: CreateStoreProductDto) {
+  create(@Body() dto: CreateStoreProductDto) {
     return this.storeProductService.create(dto);
   }
 
@@ -32,10 +33,10 @@ export class StoreProductController {
   update(@Param('id') id: string, @Body() dto: UpdateStoreProductDto, @Req() req: any) {
     return this.storeProductService.update(+id, dto);
   }
-
-  @Get()
-  findAll(@Req() req: any) {
-    return this.storeProductService.findAll();
+  
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.storeProductService.findOne(+id);
   }
 
   @Delete(':id')

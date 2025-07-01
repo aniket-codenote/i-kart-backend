@@ -7,20 +7,36 @@ import { UpdateStoreProductDto } from './dto/update-store-product.dto';
 export class StoreProductService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(id: number) {
-    const storeProduct = await this.prisma.storeProduct.findUnique({
-      where: { id },
+  async findOne(storeId: number) {
+    const storeProducts = await this.prisma.storeProduct.findMany({
+      where: { storeId },
+      include: { product: true },
     });
 
-    if (!storeProduct) {
-      throw new NotFoundException('StoreProduct not found');
+    if (!storeProducts.length) {
+      throw new NotFoundException('No products found for this store');
     }
 
-    return storeProduct;
+    return storeProducts.map(sp => sp.product);
   }
 
   async create(data: CreateStoreProductDto) {
-    return this.prisma.storeProduct.create({ data });
+    const { productIds, storeId, ...rest } = data as any;
+    if (!Array.isArray(productIds) || !storeId) {
+      throw new Error('productIds (array) and storeId are required');
+    }
+    const created = await this.prisma.$transaction(
+      productIds.map((productId: number) =>
+      this.prisma.storeProduct.create({
+        data: {
+        storeId,
+        productId,
+        ...rest,
+        },
+      }),
+      ),
+    );
+    return created;
   }
 
   async update(id: number, data: UpdateStoreProductDto) {
@@ -30,15 +46,6 @@ export class StoreProductService {
     return this.prisma.storeProduct.update({
       where: { id },
       data,
-    });
-  }
-
-  findAll() {
-    return this.prisma.storeProduct.findMany({
-      include: {
-        store: true,
-        product: true,
-      },
     });
   }
 

@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsArray, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateStoreProductDto {
@@ -6,7 +6,8 @@ export class CreateStoreProductDto {
   @IsNumber()
   storeId: number;
 
-  @ApiProperty()
-  @IsNumber()
-  productId: number;
+  @ApiProperty({ type: [Number] })
+  @IsArray()
+  @IsNumber({}, { each: true })
+  productIds: number[];
 }

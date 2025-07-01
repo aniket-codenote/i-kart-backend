@@ -84,12 +84,13 @@ export class AuthService {
     }
 
     try {
-      const defaultRole = await this.prisma.role.findUnique({
-        where: { name: 'customer' },
+      const roleName = data.roleName || 'customer';
+      const role = await this.prisma.role.findUnique({
+        where: { name: roleName },
       });
 
-      if (!defaultRole) {
-        throw new BadRequestException('Default customer role not found');
+      if (!role) {
+        throw new BadRequestException('No role found!');
       }
 
       await this.prisma.user.create({
@@ -98,7 +99,7 @@ export class AuthService {
           phone: data.phone,
           username: data.username,
           role: {
-            connect: { id: data.roleId || defaultRole.id },
+            connect: { id: role.id },
           },
         },
       });

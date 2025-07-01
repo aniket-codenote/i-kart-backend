@@ -31,7 +31,7 @@ export class SignupDto {
   username: string;
   
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  roleId?: number;
+  roleName?: string;
 }

@@ -7,15 +7,11 @@ import { UpdateStoreProductDto } from './dto/update-store-product.dto';
 export class StoreProductService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(storeId: number) {
+  async findStoreProduct(storeId: number) {
     const storeProducts = await this.prisma.storeProduct.findMany({
       where: { storeId },
       include: { product: true },
     });
-
-    if (!storeProducts.length) {
-      throw new NotFoundException('No products found for this store');
-    }
 
     return storeProducts.map(sp => sp.product);
   }
@@ -49,11 +45,12 @@ export class StoreProductService {
     });
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
-    await this.prisma.storeProduct.delete({
-      where: { id },
+  async remove(storeId: number, productId: number) {
+    return this.prisma.storeProduct.deleteMany({
+      where: {
+        storeId,
+        productId,
+      },
     });
-    return { success: true };
   }
 }

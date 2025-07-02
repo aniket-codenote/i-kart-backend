@@ -35,12 +35,12 @@ export class StoreProductController {
   }
   
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storeProductService.findOne(+id);
+  findStoreProduct(@Param('id') id: string) {
+    return this.storeProductService.findStoreProduct(+id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() req: any) {
-    return this.storeProductService.remove(+id);
+  remove(@Param('id') storeId: string, @Body('productId') productId: number,) {
+    return this.storeProductService.remove(+storeId, productId);
   }
 }

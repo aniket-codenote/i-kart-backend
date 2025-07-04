@@ -33,18 +33,18 @@ export class ProductsController {
     return this.productsService.findAll(req?.user?.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string, @Req() req: any) {
-    return this.productsService.findOne(req?.user?.id, +id);
+  @Get(':slug')
+  findOne(@Param('slug') slug: string, @Req() req: any) {
+    return this.productsService.findOne(req?.user?.id, slug);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Req() req: any) {
-    return this.productsService.update(req?.user?.id, +id, updateProductDto);
+  @Patch(':slug')
+  update(@Param('slug') slug: string, @Body() updateProductDto: UpdateProductDto, @Req() req: any) {
+    return this.productsService.update(req?.user?.id, slug, updateProductDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string, @Req() req: any) {
-    return this.productsService.remove(req?.user?.id, +id);
+  @Delete(':slug')
+  remove(@Param('slug') slug: string, @Req() req: any) {
+    return this.productsService.remove(req?.user?.id, slug);
   }
 }

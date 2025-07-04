@@ -56,10 +56,10 @@ export class ProductsService {
     );
   }
 
-  findOne(userId: number, id: number) {
+  findOne(userId: number, slug: string) {
     return this.prisma.product.findUnique(
       {
-        where: { id, userId },
+        where: { slug, userId },
         include: {
           productVariants: true,
           productImages: true,
@@ -68,16 +68,16 @@ export class ProductsService {
     );
   }
 
-  async update(userId: number, productId: number, dto: UpdateProductDto): Promise<Product> {
+  async update(userId: number, productSlug: string, dto: UpdateProductDto): Promise<Product> {
     const existing = await this.prisma.product.findFirst({
-      where: { id: productId, userId },
+      where: { slug: productSlug, userId },
     });
     if (!existing) throw new NotFoundException('Product not found');
 
     const { catalogId, productVariants, productImages, ...data } = dto;
 
     return this.prisma.product.update({
-      where: { id: productId },
+      where: { slug: productSlug },
       data: {
         ...data,
         ...(catalogId && {
@@ -105,9 +105,9 @@ export class ProductsService {
     });
   }
 
-  remove(userId: number, id: number) {
+  remove(userId: number, slug: string) {
     return this.prisma.product.delete({
-      where: { id, userId },
+      where: { slug, userId },
     });
   }
 }

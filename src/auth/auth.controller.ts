@@ -12,24 +12,24 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('otp/generate')
-  async generateOtp(@Body() generateOtpDto: GenerateOtpDto) {
+  generateOtp(@Body() generateOtpDto: GenerateOtpDto) {
     return this.authService.generateOtp(generateOtpDto);
   }
 
   @Post('otp/verify')
-  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+  verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
   @Post('signup')
-  async signup(@Body() signupDto: SignupDto) {
+  signup(@Body() signupDto: SignupDto) {
     return this.authService.signup(signupDto);
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post('signout')
-  async signout(@Req() req: any) {
+  signout(@Req() req: any) {
     return this.authService.signout(req?.user?.email);
   }
 }

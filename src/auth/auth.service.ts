@@ -64,6 +64,7 @@ export class AuthService {
       userId: user.id,
       email: user.email,
       roleId: user.roleId,
+      username: user.username,
     });
 
     await this.prisma.user.update({

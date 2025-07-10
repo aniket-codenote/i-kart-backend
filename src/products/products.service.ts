@@ -44,7 +44,7 @@ export class ProductsService {
     });
   }
 
-  findAll(userId: number) {
+  getAll(userId: number) {
     return this.prisma.product.findMany(
       {
         where: { userId },

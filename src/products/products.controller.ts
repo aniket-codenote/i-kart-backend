@@ -16,10 +16,17 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
+interface AuthenticatedRequest extends Request {
+  user: {
+    id: number;
+    email: string;
+  };
+}
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('products')
 @Controller('products')
+
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -28,9 +35,11 @@ export class ProductsController {
     return this.productsService.create(req?.user?.id, dto);
   }
 
+
   @Get()
-  findAll(@Req() req: any) {
-    return this.productsService.findAll(req?.user?.id);
+  async getProducts(@Req() req: AuthenticatedRequest) {
+    const user = req.user;
+    return this.productsService.getAll(user.id);
   }
 
   @Get(':slug')

@@ -3,9 +3,11 @@ import { AppModule } from './app.module';
 import { createSwaggerDocument } from './swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   createSwaggerDocument(app);
   const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? '').split(',');
   app.enableCors({
@@ -13,6 +15,7 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
+    exposedHeaders: ['Set-Cookie'],
   });
   app.useGlobalPipes(new ValidationPipe());
   app.use(bodyParser.json({ limit: '10mb' }));
